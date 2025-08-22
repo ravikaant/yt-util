@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Grid Customizer",
+  "version": "1.0",
+  "description": "Customize the number of videos per row in YouTube's grid layout",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["*://www.youtube.com/*"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
