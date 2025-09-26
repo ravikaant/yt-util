@@ -49,6 +49,51 @@ function updateGridLayout(itemsPerRow) {
       max-width: ${videoPercentageWidth} !important;
       min-width: ${videoPercentageWidth} !important;
     }
+    #frosted-glass.with-chipbar.ytd-app {
+      backdrop-filter: blur(2px) !important;
+      -webkit-backdrop-filter: blur(2px) !important;
+      background: transparent !important;
+      backdrop-filter: blur(4px) !important;
+      -webkit-backdrop-filter: blur(8px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    } 
+    .ytSearchboxComponentInputBox {
+      background-color: transparent !important;
+      backdrop-filter: blur(2px) !important;
+    }
+    .ytSearchboxComponentSearchButton {
+      background-color: transparent !important;
+      backdrop-filter: blur(3px) !important;
+      box-shadow: inset 0 1px 2px #eee;
+    }
+    .ytSearchboxComponentSuggestionsContainer,
+    .ytSearchboxComponentSuggestionsContainerDark {
+      background: transparent !important;
+      backdrop-filter: blur(4px) !important;
+      -webkit-backdrop-filter: blur(8px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.2) !important;
+      box-shadow: inset 0 1px 2px #eee;
+      border-radius: 8px !important;
+    }
+    .ytSearchboxComponentSuggestionsContainer {
+      background: transparent !important;
+      box-shadow: inset 0 1px 2px #eee;
+    }
+    .ytSearchboxComponentSuggestionsContainer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.03) 0%,
+        rgba(255, 255, 255, 0.02) 100%
+      ) !important;
+      pointer-events: none;
+    }
   `;
 
   document.head.appendChild(style);
