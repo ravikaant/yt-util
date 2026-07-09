@@ -62,7 +62,6 @@ function updateGridLayout(itemsPerRow) {
     .yt-grid-card-preview .preview-meta { display: none !important; }
 
     /* Reset nested backgrounds and borders to transparent to unify the elements */
-    #header.ytd-rich-grid-renderer,
     #frosted-glass, #frosted-glass.with-chipbar, ytd-app #frosted-glass, #search-form, #top-row,
     ytd-searchbox #container, ytd-searchbox #search-icon-legacy, ytd-searchbox button, ytd-searchbox yt-button-shape,
     .ytSearchboxComponentInputBox, .ytSearchboxComponentInputBoxDark,
@@ -71,7 +70,7 @@ function updateGridLayout(itemsPerRow) {
     .ytSearchboxComponentSuggestionsContainer, .ytSearchboxComponentSuggestionsContainerDark,
     ytd-searchbox-suggestions, yt-searchbox-suggestions,
     .ytSuggestionComponentSuggestion,
-    #chips-wrapper, ytd-feed-filter-chip-bar-renderer #background {
+    #background {
       background: transparent !important;
       background-color: transparent !important;
       background-image: none !important;
@@ -97,37 +96,15 @@ function updateGridLayout(itemsPerRow) {
       -webkit-backdrop-filter: url(#yt-glass-blur) !important;
       z-index: -1;
       pointer-events: none;
+      transition: background-color 0.3s ease;
     }
-
-    /* 2. Chips Bar */
-    #header.ytd-rich-grid-renderer {
-      background-color: transparent !important;
-    }
-    ytd-feed-filter-chip-bar-renderer, ytd-browse-filter-chip-bar-renderer, ytd-chip-cloud-renderer {
-      background-color: transparent !important;
-      position: relative !important; /* CRITICAL: prevents ::before from escaping and blurring the entire page! */
-      z-index: 1000 !important;
-    }
-    ytd-feed-filter-chip-bar-renderer::before, ytd-browse-filter-chip-bar-renderer::before, ytd-chip-cloud-renderer::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-color: rgba(255, 255, 255, 0.05) !important;
-      backdrop-filter: url(#yt-glass-blur) !important;
-      -webkit-backdrop-filter: url(#yt-glass-blur) !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), inset 0 1px 4px 0 rgba(255, 255, 255, 0.2) !important;
-      z-index: -1;
-      pointer-events: none;
-    }
-    /* Indestructible border for the chips bar */
-    ytd-feed-filter-chip-bar-renderer::after, ytd-browse-filter-chip-bar-renderer::after, ytd-chip-cloud-renderer::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
-      z-index: 2;
-      pointer-events: none;
+    
+    /* Darken the glass header when on the Watch page */
+    body.yt-watch-page #masthead-container::before,
+    body.yt-watch-page ytd-feed-filter-chip-bar-renderer::before,
+    body.yt-watch-page ytd-browse-filter-chip-bar-renderer::before,
+    body.yt-watch-page ytd-chip-cloud-renderer::before {
+      background-color: rgba(18, 18, 18, 0.7) !important;
     }
 
     /* Style individual chips to look like glass bubbles while preserving theme colors */
@@ -562,3 +539,15 @@ const initialObserver = new MutationObserver(function (mutations) {
 document.addEventListener('DOMContentLoaded', function () {
   initialObserver.observe(document.body, { childList: true, subtree: true });
 });
+
+// Global tracker for YouTube SPA navigation to detect the Watch page
+const updatePageClass = () => {
+  if (window.location.pathname === '/watch') {
+    document.body.classList.add('yt-watch-page');
+  } else {
+    document.body.classList.remove('yt-watch-page');
+  }
+};
+document.addEventListener('yt-navigate-finish', updatePageClass);
+// Run initially
+updatePageClass();
