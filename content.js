@@ -246,13 +246,13 @@ function injectLiquidGlassSVG() {
     <svg style="width: 0; height: 0; position: absolute; pointer-events: none;" xmlns="http://www.w3.org/2000/svg">
       <filter id="yt-glass-blur" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
         <!-- 1. Base ambient blur -->
-        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+        <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
         
         <!-- 2. True mathematical lens normal map (replaces feTurbulence noise) -->
         <feImage href="${displacementMapUrl}" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="lens_map" />
         
         <!-- 3. Displace (magnify) using the lens map -->
-        <feDisplacementMap in="blur" in2="lens_map" scale="40" xChannelSelector="R" yChannelSelector="G" result="displaced" />
+        <feDisplacementMap in="blur" in2="lens_map" scale="25" xChannelSelector="R" yChannelSelector="G" result="displaced" />
         
         <!-- 4. Boost saturation (Apple liquid glass hallmark) -->
         <feColorMatrix in="displaced" type="saturate" values="1.5" />
