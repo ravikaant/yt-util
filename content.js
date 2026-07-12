@@ -61,6 +61,7 @@ function updateGridLayout(itemsPerRow) {
     .yt-grid-card-preview .preview-views-icon { color: var(--tde41338fc2bd4ba5) !important; margin-right: 4px !important; font-size: 11px !important; }
     .yt-grid-card-preview .preview-meta { display: none !important; }
 
+
     /* Reset nested backgrounds and borders to transparent to unify the elements */
     #frosted-glass, #frosted-glass.with-chipbar, ytd-app #frosted-glass, #search-form, #top-row,
     ytd-searchbox #container, ytd-searchbox #search-icon-legacy, ytd-searchbox button, ytd-searchbox yt-button-shape,
@@ -84,10 +85,10 @@ function updateGridLayout(itemsPerRow) {
     /* This architectural pattern prevents Chrome from breaking 'position: sticky' or altering box dimensions! */
 
     /* 1. Masthead */
-    #masthead-container {
+    body:not(.yt-watch-page) #masthead-container {
       background-color: transparent !important;
     }
-    #masthead-container::before {
+    body:not(.yt-watch-page) #masthead-container::before {
       content: "";
       position: absolute;
       inset: 0;
@@ -99,13 +100,7 @@ function updateGridLayout(itemsPerRow) {
       transition: background-color 0.3s ease;
     }
     
-    /* Darken the glass header when on the Watch page */
-    body.yt-watch-page #masthead-container::before,
-    body.yt-watch-page ytd-feed-filter-chip-bar-renderer::before,
-    body.yt-watch-page ytd-browse-filter-chip-bar-renderer::before,
-    body.yt-watch-page ytd-chip-cloud-renderer::before {
-      background-color: rgba(18, 18, 18, 0.7) !important;
-    }
+
 
     /* Style individual chips to look like glass bubbles while preserving theme colors */
     yt-chip-cloud-chip-renderer chip-shape .ytChipShapeChip {
@@ -195,6 +190,7 @@ function updateGridLayout(itemsPerRow) {
     .sbsb_c:hover, .ytSuggestionComponentSuggestion:hover, .ytSuggestionComponentHighlighted, .sbdd_c:hover {
       background-color: rgba(255, 255, 255, 0.1) !important;
     }
+
   `;
 
   document.head.appendChild(style);
@@ -273,7 +269,7 @@ function setupHoverZoom() {
     overlay.className = 'yt-grid-hover-zoom';
     overlay.style.position = 'fixed';
     overlay.style.display = 'none';
-    overlay.style.pointerEvents = 'none';
+    overlay.style.pointerEvents = 'auto';
     overlay.style.zIndex = '2147483647';
     document.body.appendChild(overlay);
   }
@@ -396,6 +392,14 @@ function createHoverPreview(card) {
     }
   }
 
+  const hideOverlay = () => {
+    const o = document.getElementById('yt-hover-zoom-overlay');
+    if (o) {
+      o.style.display = 'none';
+      o.classList.remove('is-visible');
+    }
+  };
+
   const wrapper = document.createElement('div');
   wrapper.className = 'yt-grid-card-preview';
   if (isShort) wrapper.classList.add('is-short');
@@ -405,7 +409,14 @@ function createHoverPreview(card) {
   const thumbImage = document.createElement('img');
   thumbImage.src = thumbSrc || '';
   thumbImage.alt = titleText || 'Video thumbnail';
+  
   thumb.appendChild(thumbImage);
+  thumb.style.cursor = 'pointer';
+  thumb.onclick = (e) => {
+    e.preventDefault();
+    hideOverlay();
+    if (titleAnchor) titleAnchor.click();
+  };
   if (durationText) {
     const duration = document.createElement('div');
     duration.className = 'preview-duration';
@@ -422,8 +433,19 @@ function createHoverPreview(card) {
     const titleLink = document.createElement('a');
     titleLink.href = titleUrl;
     titleLink.textContent = titleText;
+    titleLink.onclick = (e) => {
+      e.preventDefault();
+      hideOverlay();
+      if (titleAnchor) titleAnchor.click();
+    };
     title.appendChild(titleLink);
   } else {
+    title.style.cursor = 'pointer';
+    title.onclick = (e) => {
+      e.preventDefault();
+      hideOverlay();
+      if (titleAnchor) titleAnchor.click();
+    };
     title.textContent = titleText;
   }
 
@@ -455,8 +477,19 @@ function createHoverPreview(card) {
     channelLink.textContent = channelText;
     channelLink.style.color = 'inherit';
     channelLink.style.textDecoration = 'none';
+    channelLink.onclick = (e) => {
+      e.preventDefault();
+      hideOverlay();
+      if (channelAnchor) channelAnchor.click();
+    };
     channelName.appendChild(channelLink);
   } else {
+    channelName.style.cursor = 'pointer';
+    channelName.onclick = (e) => {
+      e.preventDefault();
+      hideOverlay();
+      if (channelAnchor) channelAnchor.click();
+    };
     channelName.textContent = channelText;
   }
   channelRow.appendChild(channelName);
