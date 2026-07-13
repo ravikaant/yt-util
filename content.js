@@ -316,7 +316,7 @@ function createHoverPreview(card) {
 
   const thumbImg = card.querySelector('ytd-thumbnail img, yt-img-shadow img, img');
   const thumbSrc = thumbImg ? (thumbImg.currentSrc || thumbImg.src) : '';
-  const durationEl = card.querySelector('ytd-thumbnail-overlay-time-status-renderer span, span.ytd-thumbnail-overlay-time-status-renderer, .ytd-thumbnail-overlay-time-status-renderer span');
+  const durationEl = card.querySelector('ytd-thumbnail-overlay-time-status-renderer span, span.ytd-thumbnail-overlay-time-status-renderer, .ytd-thumbnail-overlay-time-status-renderer span, .ytBadgeShapeThumbnailBadge .ytBadgeShapeText, .ytThumbnailBottomOverlayViewModelBadge .ytBadgeShapeText');
   const durationText = durationEl ? durationEl.textContent.trim() : '';
   const titleAnchor = card.querySelector('#video-title, a#video-title, h3 a, h3, .ytLockupMetadataViewModelTitle, .shortsLockupViewModelHostMetadataTitle a');
   const titleText = titleAnchor ? titleAnchor.textContent.trim() : '';
@@ -354,16 +354,20 @@ function createHoverPreview(card) {
     const shortsViews = card.querySelector('.shortsLockupViewModelHostOutsideMetadataSubhead span');
     if (shortsViews) viewsText = shortsViews.textContent.trim();
   } else {
-    const metadataRow = card.querySelector('yt-content-metadata-view-model .ytContentMetadataViewModelMetadataRow, .ytContentMetadataViewModelMetadataRow, #metadata-line, .metadata-line, ytd-video-meta-block, .ytd-video-meta-block');
-    if (metadataRow) {
-      const metadataItems = Array.from(metadataRow.querySelectorAll('span, a'))
-        .map((el) => {
-          if (el.getAttribute('aria-hidden') === 'true') return '';
-          if (el.hasAttribute('aria-label')) return el.getAttribute('aria-label').trim();
-          return el.textContent.trim();
-        })
-        .filter(Boolean)
-        .filter((text) => !/^[•· - ]+$/.test(text));
+    const metadataRows = Array.from(card.querySelectorAll('yt-content-metadata-view-model .ytContentMetadataViewModelMetadataRow, #metadata-line, .metadata-line, ytd-video-meta-block, .ytd-video-meta-block'));
+    if (metadataRows.length > 0) {
+      let metadataItems = [];
+      metadataRows.forEach(row => {
+        const items = Array.from(row.querySelectorAll('span, a'))
+          .map((el) => {
+            if (el.getAttribute('aria-hidden') === 'true') return '';
+            if (el.hasAttribute('aria-label')) return el.getAttribute('aria-label').trim();
+            return el.textContent.trim();
+          })
+          .filter(Boolean)
+          .filter((text) => !/^[•· - ]+$/.test(text));
+        metadataItems = metadataItems.concat(items);
+      });
 
       const filteredItems = metadataItems.filter((item) => {
         if (!channelText) return true;
@@ -371,7 +375,6 @@ function createHoverPreview(card) {
       });
 
       if (filteredItems.length >= 2) {
-        // ALWAYS grab the last two items, as the preceding ones might be unfiltered multi-channel names
         viewsText = filteredItems[filteredItems.length - 2];
         publishedText = filteredItems[filteredItems.length - 1];
       } else if (filteredItems.length === 1) {
@@ -384,8 +387,8 @@ function createHoverPreview(card) {
       }
     }
 
-    if ((!viewsText || !publishedText) && metadataRow) {
-      const metadata = metadataRow.textContent.trim().replace(/\s+/g, ' ');
+    if ((!viewsText || !publishedText) && metadataRows.length > 0) {
+      const metadata = metadataRows.map(row => row.textContent.trim().replace(/\s+/g, ' ')).join(' • ');
       const parts = metadata.split(/(?:•|·|\u2022)/).map((part) => part.trim()).filter(Boolean);
       if (parts.length >= 2) {
         const tail = parts.slice(-2);
@@ -526,7 +529,7 @@ function bindCards() {
   const overlay = document.getElementById('yt-hover-zoom-overlay');
   if (!overlay) return;
 
-  const cards = document.querySelectorAll('ytd-rich-item-renderer:not([is-slim-grid]), ytd-video-renderer, ytd-grid-video-renderer');
+  const cards = document.querySelectorAll('ytd-rich-item-renderer:not([is-slim-grid]), ytd-video-renderer, ytd-grid-video-renderer, ytd-compact-video-renderer, yt-lockup-view-model');
   cards.forEach((card) => {
     if (card.dataset.ytHoverZoomBound === 'true') return;
     card.dataset.ytHoverZoomBound = 'true';
@@ -540,7 +543,7 @@ function bindCards() {
       if (isShort) {
         overlay.style.width = `${contentRect.width + 16}px`; // Match card width precisely + padding
       } else {
-        overlay.style.width = 'min(560px, calc(100vw - 24px))';
+        overlay.style.width = 'min(360px, calc(100vw - 24px))';
       }
 
       overlay.innerHTML = '';
