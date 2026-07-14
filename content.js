@@ -103,6 +103,48 @@ function updateGridLayout(itemsPerRow) {
       transition: background-color 0.3s ease;
     }
     
+    /* Fix header contrast on watch page (YouTube forces dark theme variables here, so we override for light theme) */
+    html:not([dark]) body.yt-watch-page #masthead-container {
+      --yt-spec-text-primary: #0f0f0f !important;
+      --yt-spec-text-secondary: #606060 !important;
+      --yt-spec-icon-inactive: #0f0f0f !important;
+      --yt-spec-brand-icon-active: #0f0f0f !important;
+      --yt-spec-brand-icon-inactive: #0f0f0f !important;
+      --yt-spec-button-chip-background-hover: rgba(0, 0, 0, 0.05) !important;
+      --ytd-searchbox-text-color: #0f0f0f !important;
+    }
+
+    html:not([dark]) body.yt-watch-page #masthead-container svg,
+    html:not([dark]) body.yt-watch-page #masthead-container yt-icon,
+    html:not([dark]) body.yt-watch-page #masthead-container .yt-icon,
+    html:not([dark]) body.yt-watch-page #masthead-container #voice-search-button,
+    html:not([dark]) body.yt-watch-page #masthead-container ytd-topbar-menu-button-renderer yt-icon {
+      color: #0f0f0f !important;
+      fill: #0f0f0f !important;
+    }
+
+    html:not([dark]) body.yt-watch-page #masthead-container input,
+    html:not([dark]) body.yt-watch-page #masthead-container .ytSearchboxComponentInputBox {
+      color: #0f0f0f !important;
+    }
+    
+    html:not([dark]) body.yt-watch-page #masthead-container input::placeholder,
+    html:not([dark]) body.yt-watch-page #masthead-container .ytSearchboxComponentInputBox::placeholder {
+      color: #606060 !important;
+    }
+
+    /* Fix Create button background and text */
+    html:not([dark]) body.yt-watch-page #masthead-container yt-button-shape button,
+    html:not([dark]) body.yt-watch-page #masthead-container .yt-spec-button-shape-next--tonal {
+      background-color: rgba(0, 0, 0, 0.05) !important;
+      color: #0f0f0f !important;
+    }
+    html:not([dark]) body.yt-watch-page #masthead-container yt-button-shape button .yt-icon,
+    html:not([dark]) body.yt-watch-page #masthead-container yt-button-shape button svg {
+      fill: #0f0f0f !important;
+      color: #0f0f0f !important;
+    }
+    
 
 
     /* Style individual chips to look like glass bubbles while preserving theme colors */
